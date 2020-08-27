@@ -32,11 +32,11 @@ files.upload()
 
 !chmod 600 ~/.kaggle/kaggle.json
 
-!kaggle datasets download -d iarunava/cell-images-for-detecting-malaria
+!kaggle datasets download -d arch11/malaria-images
 
 from zipfile import ZipFile
 
-file_name = "cell-images-for-detecting-malaria.zip"
+file_name = "malaria-images.zip"
 
 with ZipFile(file_name,'r') as zip:
   zip.extractall()
@@ -51,7 +51,7 @@ for layer in vgg.layers:
   layer.trainable = False
 
 # useful for getting number of classes
-folders = glob('cell_images/cell_images/*')
+folders = glob('cell_images/train/*')
   
 
 # our layers - you can add more if you want
@@ -71,23 +71,22 @@ model.compile(
   metrics=['accuracy']
 )
 
-datagen = ImageDataGenerator(rescale=1/255, validation_split=0.2,shear_range=0.2,
-        zoom_range=0.2,
-        horizontal_flip=True)
+train_datagen = ImageDataGenerator(rescale = 1./255,
+                                   shear_range = 0.2,
+                                   zoom_range = 0.2,
+                                   horizontal_flip = True)
 
+test_datagen = ImageDataGenerator(rescale = 1./255)
 
-training_set = datagen.flow_from_directory('cell_images/cell_images',
-                                               target_size = (224, 224),
-                                             batch_size = 32,
-                                                 class_mode = 'categorical',
-                                                 subset='training')
+training_set = train_datagen.flow_from_directory('cell_images/train',
+                                                 target_size = (224, 224),
+                                                 batch_size = 32,
+                                                 class_mode = 'categorical')
 
-test_set = datagen.flow_from_directory('cell_images/cell_images',
-                                           target_size = (224, 224),
-                                          batch_size = 32,
-                                            class_mode = 'categorical',
-                                            subset='validation')
-
+test_set = test_datagen.flow_from_directory('cell_images/test',
+                                            target_size = (224, 224),
+                                            batch_size = 32,
+                                            class_mode = 'categorical')
 # fit the model
 # Run the cell. It will take some time to execute
 r = model.fit_generator(
