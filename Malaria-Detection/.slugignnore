@@ -1,0 +1,7 @@
+*.psd
+*.pdf
+/static
+/templates
+/requirements.txt
+/malaria_detection_cnn.py
+/Procfile
