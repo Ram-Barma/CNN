@@ -50,7 +50,6 @@ def model_predict(img_path, model):
     
     return preds
 
-
 @app.route('/', methods=['GET'])
 def index():
     # Main page
